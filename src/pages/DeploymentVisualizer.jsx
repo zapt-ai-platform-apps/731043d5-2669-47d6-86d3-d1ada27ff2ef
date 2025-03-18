@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Circle, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Circle, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import * as Sentry from '@sentry/browser';
@@ -30,6 +30,19 @@ function MapCenterUpdater({ center }) {
   useEffect(() => {
     map.setView(center, map.getZoom());
   }, [center, map]);
+  
+  return null;
+}
+
+// New component to handle map clicks
+function MapClickHandler({ isAddingMarker, onMapClick }) {
+  const map = useMapEvents({
+    click: (e) => {
+      if (isAddingMarker) {
+        onMapClick(e);
+      }
+    }
+  });
   
   return null;
 }
@@ -130,6 +143,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
 
   const handleMapClick = (e) => {
     if (isAddingMarker) {
+      console.log("Map clicked, adding new sensor at:", e.latlng);
       const newSensor = {
         id: `sensor-${sensorLocations.length + 1}`,
         position: [e.latlng.lat, e.latlng.lng],
@@ -204,7 +218,6 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
                 mapRef.current = map;
                 setMapLoaded(true);
               }}
-              onClick={handleMapClick}
               className="z-0"
             >
               <TileLayer
@@ -213,6 +226,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
               />
               
               <MapCenterUpdater center={mapCenter} />
+              <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={handleMapClick} />
               
               {sensorLocations.map(sensor => (
                 <React.Fragment key={sensor.id}>
