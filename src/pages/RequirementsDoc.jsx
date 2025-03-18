@@ -132,7 +132,7 @@ const RequirementsDoc = ({
   return (
     <div className="container mx-auto max-w-4xl animate-fade-in">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-primary-700 to-primary-800 inline-block">
+        <h1 className="text-3xl md:text-4xl font-bold text-white bg-gradient-to-r from-primary-700 to-primary-800 inline-block px-3 py-1 rounded">
           Deployment Requirements
         </h1>
         <p className="text-secondary-600 text-lg mt-3">

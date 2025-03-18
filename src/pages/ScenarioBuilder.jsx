@@ -13,6 +13,7 @@ const ScenarioBuilder = ({ onComplete }) => {
 
   const [errors, setErrors] = useState({});
   const [formTouched, setFormTouched] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const missionTypes = [
     { value: 'border_security', label: 'Border Security', icon: '🛡️' },
@@ -96,8 +97,21 @@ const ScenarioBuilder = ({ onComplete }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    if (isSubmitting) return;
+    
     if (validateForm()) {
+      setIsSubmitting(true);
       onComplete(formData);
+    }
+  };
+
+  const getComplexityLabel = (complexity) => {
+    // Ensure we always display the correct label
+    switch(complexity) {
+      case 'low': return 'Low';
+      case 'medium': return 'Medium';
+      case 'high': return 'High';
+      default: return 'Medium';
     }
   };
 
@@ -113,7 +127,7 @@ const ScenarioBuilder = ({ onComplete }) => {
   return (
     <div className="container mx-auto max-w-3xl animate-fade-in">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-primary-700 to-primary-800 inline-block">
+        <h1 className="text-3xl md:text-4xl font-bold text-white bg-gradient-to-r from-primary-700 to-primary-800 inline-block px-3 py-1 rounded">
           Deployment Scenario Builder
         </h1>
         <p className="text-secondary-600 text-lg mt-3">
@@ -240,7 +254,7 @@ const ScenarioBuilder = ({ onComplete }) => {
             <div className="flex items-center justify-between mb-2">
               <span className="text-success-600 font-medium">Low</span>
               <span className={`font-medium ${getComplexityColor(formData.terrainComplexity)}`}>
-                {formData.terrainComplexity.charAt(0).toUpperCase() + formData.terrainComplexity.slice(1)}
+                {getComplexityLabel(formData.terrainComplexity)}
               </span>
               <span className="text-red-600 font-medium">High</span>
             </div>
@@ -286,6 +300,7 @@ const ScenarioBuilder = ({ onComplete }) => {
           <button 
             type="submit" 
             className="btn btn-primary w-full group cursor-pointer shadow-soft"
+            disabled={isSubmitting}
           >
             <span>Continue to Equipment Selection</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 

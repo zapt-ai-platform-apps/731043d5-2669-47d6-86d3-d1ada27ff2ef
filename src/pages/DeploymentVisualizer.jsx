@@ -42,6 +42,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
   const [currentNote, setCurrentNote] = useState('');
   const [deploymentNotes, setDeploymentNotes] = useState('');
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const mapRef = useRef(null);
 
   // Display error message if scenario data is missing
@@ -170,6 +171,9 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
   };
 
   const handleSubmit = () => {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
     const deploymentData = {
       sensorLocations,
       coverageRadius,
@@ -181,7 +185,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
   return (
     <div className="container mx-auto max-w-5xl animate-fade-in">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-primary-700 to-primary-800 inline-block">
+        <h1 className="text-3xl md:text-4xl font-bold text-white bg-gradient-to-r from-primary-700 to-primary-800 inline-block px-3 py-1 rounded">
           Deployment Visualization
         </h1>
         <p className="text-secondary-600 text-lg mt-3">
@@ -344,6 +348,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
           <button 
             onClick={handleSubmit}
             className="btn btn-primary w-full shadow-soft-lg group cursor-pointer"
+            disabled={isSubmitting}
           >
             <span>Generate Deployment Requirements</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 

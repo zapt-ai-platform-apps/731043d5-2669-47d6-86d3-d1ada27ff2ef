@@ -7,6 +7,7 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState([]);
   const [errors, setErrors] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Get equipment recommendations based on scenario data
   useEffect(() => {
@@ -206,11 +207,14 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
   };
 
   const handleSubmit = () => {
+    if (isSubmitting) return;
+    
     if (selectedEquipment.length === 0) {
       setErrors('Please select at least one piece of equipment');
       return;
     }
     
+    setIsSubmitting(true);
     const selectedItems = recommendations.filter(item => 
       selectedEquipment.includes(item.id)
     );
@@ -260,7 +264,7 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
   return (
     <div className="container mx-auto max-w-4xl animate-fade-in">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-primary-700 to-primary-800 inline-block">
+        <h1 className="text-3xl md:text-4xl font-bold text-white bg-gradient-to-r from-primary-700 to-primary-800 inline-block px-3 py-1 rounded">
           Recommended Equipment
         </h1>
         <p className="text-secondary-600 text-lg mt-3">
@@ -314,7 +318,7 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
         <button 
           onClick={handleSubmit} 
           className="btn btn-primary w-full group cursor-pointer shadow-soft"
-          disabled={selectedEquipment.length === 0}
+          disabled={selectedEquipment.length === 0 || isSubmitting}
         >
           <span>Continue to Deployment Visualization</span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
