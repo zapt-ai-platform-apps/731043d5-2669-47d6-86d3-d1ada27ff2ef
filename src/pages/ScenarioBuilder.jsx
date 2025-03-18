@@ -105,16 +105,6 @@ const ScenarioBuilder = ({ onComplete }) => {
     }
   };
 
-  const getComplexityLabel = (complexity) => {
-    // Ensure we always display the correct label
-    switch(complexity) {
-      case 'low': return 'Low';
-      case 'medium': return 'Medium';
-      case 'high': return 'High';
-      default: return 'Medium';
-    }
-  };
-
   const getComplexityColor = (complexity) => {
     switch(complexity) {
       case 'low': return 'text-success-600';
@@ -253,34 +243,39 @@ const ScenarioBuilder = ({ onComplete }) => {
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-success-600 font-medium">Low</span>
-              <span className={`font-medium ${getComplexityColor(formData.terrainComplexity)}`}>
-                {getComplexityLabel(formData.terrainComplexity)}
-              </span>
+              <span className="font-medium text-warning-600">Medium</span>
               <span className="text-red-600 font-medium">High</span>
             </div>
-            <input
-              type="range"
-              id="terrainComplexity"
-              name="terrainComplexity"
-              min="1"
-              max="5"
-              value={formData.terrainComplexity === 'low' ? 1 : formData.terrainComplexity === 'medium' ? 3 : 5}
-              onChange={(e) => {
-                const value = parseInt(e.target.value);
-                let complexity;
-                if (value <= 2) complexity = 'low';
-                else if (value <= 4) complexity = 'medium';
-                else complexity = 'high';
-                
-                handleInputChange({
-                  target: {
-                    name: 'terrainComplexity',
-                    value: complexity
-                  }
-                });
-              }}
-              className="w-full"
-            />
+            <div className="relative">
+              <input
+                type="range"
+                id="terrainComplexity"
+                name="terrainComplexity"
+                min="1"
+                max="5"
+                value={formData.terrainComplexity === 'low' ? 1 : formData.terrainComplexity === 'medium' ? 3 : 5}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  let complexity;
+                  if (value <= 2) complexity = 'low';
+                  else if (value <= 4) complexity = 'medium';
+                  else complexity = 'high';
+                  
+                  handleInputChange({
+                    target: {
+                      name: 'terrainComplexity',
+                      value: complexity
+                    }
+                  });
+                }}
+                className="w-full"
+              />
+              <div className="mt-2 text-center">
+                <span className={`text-sm font-medium ${getComplexityColor(formData.terrainComplexity)}`}>
+                  Selected: {formData.terrainComplexity.charAt(0).toUpperCase() + formData.terrainComplexity.slice(1)}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
