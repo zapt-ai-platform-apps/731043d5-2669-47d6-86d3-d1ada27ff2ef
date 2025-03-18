@@ -34,14 +34,14 @@ function MapCenterUpdater({ center }) {
   return null;
 }
 
-// New component to handle map clicks
-function MapClickHandler({ isAddingMarker, onMapClick }) {
-  const map = useMapEvents({
+// Component to handle map click events
+function MapClickHandler({ isAddingMarker, handleMapClick }) {
+  useMapEvents({
     click: (e) => {
       if (isAddingMarker) {
-        onMapClick(e);
+        handleMapClick(e);
       }
-    }
+    },
   });
   
   return null;
@@ -143,7 +143,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
 
   const handleMapClick = (e) => {
     if (isAddingMarker) {
-      console.log("Map clicked, adding new sensor at:", e.latlng);
+      console.log("Adding new sensor at:", e.latlng);
       const newSensor = {
         id: `sensor-${sensorLocations.length + 1}`,
         position: [e.latlng.lat, e.latlng.lng],
@@ -226,7 +226,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
               />
               
               <MapCenterUpdater center={mapCenter} />
-              <MapClickHandler isAddingMarker={isAddingMarker} onMapClick={handleMapClick} />
+              <MapClickHandler isAddingMarker={isAddingMarker} handleMapClick={handleMapClick} />
               
               {sensorLocations.map(sensor => (
                 <React.Fragment key={sensor.id}>
