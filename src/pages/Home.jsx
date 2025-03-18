@@ -2,102 +2,154 @@ import React from 'react';
 
 const Home = ({ onGetStarted }) => {
   return (
-    <div className="container mx-auto max-w-6xl">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-blue-800 mb-4">RFeye Deployment Planner</h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Plan and optimize your RF sensor deployments for various scenarios with our intuitive planning tool.
+    <div className="container mx-auto max-w-6xl animate-fade-in">
+      {/* Hero Section */}
+      <div className="text-center mb-16">
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-800 mb-6 leading-tight">
+          RFeye Deployment Planner
+        </h1>
+        <p className="text-xl text-secondary-600 max-w-3xl mx-auto mb-8">
+          Plan and optimize your RF sensor deployments with our intuitive planning tool designed for security professionals.
         </p>
+        <button 
+          onClick={onGetStarted}
+          className="btn btn-primary btn-lg group cursor-pointer"
+        >
+          <span>Get Started</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
+               className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform">
+            <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
+          </svg>
+        </button>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-12 mb-12">
-        <div className="card">
-          <h2 className="text-2xl font-bold text-blue-700 mb-4">Plan Your RF Deployment</h2>
-          <p className="mb-6">
+      {/* Main Feature Cards */}
+      <div className="grid md:grid-cols-2 gap-8 mb-16">
+        <div className="card-interactive bg-gradient-to-br from-primary-50 to-white">
+          <div className="rounded-full bg-primary-100 h-12 w-12 flex items-center justify-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-primary-600">
+              <path fillRule="evenodd" d="M12 1.5a.75.75 0 01.75.75V4.5a.75.75 0 01-1.5 0V2.25A.75.75 0 0112 1.5zM5.636 4.136a.75.75 0 011.06 0l1.592 1.591a.75.75 0 01-1.061 1.06l-1.591-1.59a.75.75 0 010-1.061zm12.728 0a.75.75 0 010 1.06l-1.591 1.592a.75.75 0 01-1.06-1.061l1.59-1.591a.75.75 0 011.061 0zm-6.816 4.496a.75.75 0 01.82.311l5.228 7.917a.75.75 0 01-.777 1.148l-2.097-.43 1.045 3.9a.75.75 0 01-1.45.388l-1.044-3.899-1.601 1.42a.75.75 0 01-1.247-.606l.569-9.47a.75.75 0 01.554-.68zM3 10.5a.75.75 0 01.75-.75H6a.75.75 0 010 1.5H3.75A.75.75 0 013 10.5zm14.25 0a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H18a.75.75 0 01-.75-.75zm-8.962 3.712a.75.75 0 010 1.061l-1.591 1.591a.75.75 0 11-1.061-1.06l1.591-1.592a.75.75 0 011.06 0z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-primary-800 mb-3">
+            Strategic RF Deployment
+          </h2>
+          <p className="text-secondary-600 mb-6">
             Whether you're setting up border security, infrastructure protection, or spectrum monitoring, 
-            our tool helps you create the optimal deployment configuration for your needs.
+            our tool helps you create the optimal deployment configuration for your specific needs.
           </p>
           <button 
             onClick={onGetStarted}
-            className="btn btn-primary"
+            className="btn btn-outline group cursor-pointer"
           >
-            Get Started
+            <span>Plan Your Deployment</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
+                 className="w-5 h-5 ml-1.5 transform group-hover:translate-x-1 transition-transform">
+              <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
+            </svg>
           </button>
         </div>
-        <div className="card bg-blue-50 border border-blue-100">
-          <h2 className="text-2xl font-bold text-blue-700 mb-4">Key Features</h2>
-          <ul className="space-y-3">
+        
+        <div className="card-interactive bg-gradient-to-br from-secondary-50 to-white">
+          <div className="rounded-full bg-secondary-100 h-12 w-12 flex items-center justify-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-secondary-700">
+              <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-secondary-900 mb-3">
+            Key Features
+          </h2>
+          <ul className="space-y-3 mb-6">
             <li className="flex items-start">
-              <svg className="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Scenario-specific deployment planning</span>
+              <span className="inline-flex items-center justify-center rounded-full bg-success-100 p-1 mr-3">
+                <svg className="h-4 w-4 text-success-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span className="text-secondary-700">Scenario-specific deployment planning with geospatial analysis</span>
             </li>
             <li className="flex items-start">
-              <svg className="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Equipment recommendations based on your needs</span>
+              <span className="inline-flex items-center justify-center rounded-full bg-success-100 p-1 mr-3">
+                <svg className="h-4 w-4 text-success-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span className="text-secondary-700">AI-powered equipment recommendations based on your needs</span>
             </li>
             <li className="flex items-start">
-              <svg className="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Visual deployment mapping and optimization</span>
+              <span className="inline-flex items-center justify-center rounded-full bg-success-100 p-1 mr-3">
+                <svg className="h-4 w-4 text-success-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span className="text-secondary-700">Interactive map-based deployment visualization</span>
             </li>
             <li className="flex items-start">
-              <svg className="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Requirement documentation generation</span>
+              <span className="inline-flex items-center justify-center rounded-full bg-success-100 p-1 mr-3">
+                <svg className="h-4 w-4 text-success-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span className="text-secondary-700">Professional requirement documentation & budget estimation</span>
             </li>
           </ul>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6 mb-12">
-        <div className="card text-center">
-          <div className="rounded-full bg-blue-100 h-16 w-16 flex items-center justify-center mx-auto mb-4">
-            <svg className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
+      {/* Process Steps */}
+      <div className="mb-16">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">How It Works</h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="card-interactive text-center">
+            <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary-100 text-primary-600 mb-4">
+              <span className="text-xl font-bold">1</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Build Your Scenario</h3>
+            <p className="text-secondary-600">
+              Define your mission type, environment, and coverage objectives to create a tailored deployment plan.
+            </p>
           </div>
-          <h3 className="text-xl font-semibold mb-2">Build Your Scenario</h3>
-          <p className="text-gray-600">
-            Define your mission type, environment, and coverage objectives to create a tailored deployment plan.
-          </p>
-        </div>
-        <div className="card text-center">
-          <div className="rounded-full bg-green-100 h-16 w-16 flex items-center justify-center mx-auto mb-4">
-            <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
+          
+          <div className="card-interactive text-center">
+            <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-success-100 text-success-600 mb-4">
+              <span className="text-xl font-bold">2</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Equipment Recommendations</h3>
+            <p className="text-secondary-600">
+              Receive AI-powered suggestions for the best RFeye Node models and configurations.
+            </p>
           </div>
-          <h3 className="text-xl font-semibold mb-2">Get Equipment Recommendations</h3>
-          <p className="text-gray-600">
-            Receive AI-powered suggestions for the best RFeye Node models and configurations.
-          </p>
-        </div>
-        <div className="card text-center">
-          <div className="rounded-full bg-purple-100 h-16 w-16 flex items-center justify-center mx-auto mb-4">
-            <svg className="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-            </svg>
+          
+          <div className="card-interactive text-center">
+            <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-warning-100 text-warning-600 mb-4">
+              <span className="text-xl font-bold">3</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Visualize & Document</h3>
+            <p className="text-secondary-600">
+              Map out your sensor locations, see coverage estimates, and generate professional documentation.
+            </p>
           </div>
-          <h3 className="text-xl font-semibold mb-2">Visualize Your Deployment</h3>
-          <p className="text-gray-600">
-            Map out your sensor locations and see estimated coverage to optimize positioning.
-          </p>
         </div>
       </div>
 
-      <div className="text-center mb-12">
-        <button 
-          onClick={onGetStarted}
-          className="btn btn-primary text-lg px-8 py-3"
-        >
-          Start Planning Your Deployment
-        </button>
+      {/* CTA Section */}
+      <div className="text-center mb-16">
+        <div className="card bg-gradient-to-br from-primary-50 via-white to-secondary-50 border-0 shadow-soft-lg py-10 px-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary-900 mb-4">Ready to optimize your RFeye deployment?</h2>
+          <p className="text-lg text-secondary-600 max-w-3xl mx-auto mb-6">
+            Our planning tool will guide you through every step of the process, from scenario definition to final documentation.
+          </p>
+          <button 
+            onClick={onGetStarted}
+            className="btn btn-primary btn-lg cursor-pointer shadow-soft group"
+          >
+            <span>Start Planning Your Deployment</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
+                 className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform">
+              <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -15,7 +15,26 @@ export default function App() {
 
   // Function to set the current page and manage workflow
   const navigateTo = (page) => {
-    setCurrentPage(page);
+    // Add simple validation to prevent skipping steps
+    if (page === 'equipment' && !scenarioData) {
+      console.log("Cannot navigate to equipment selection without scenario data");
+      return;
+    }
+    if (page === 'visualization' && (!scenarioData || !equipmentData)) {
+      console.log("Cannot navigate to visualization without scenario and equipment data");
+      return;
+    }
+    if (page === 'requirements' && (!scenarioData || !equipmentData || !deploymentData)) {
+      console.log("Cannot navigate to requirements doc without complete data");
+      return;
+    }
+    
+    // Use animation classes for page transitions
+    document.querySelector('main').classList.add('opacity-0');
+    setTimeout(() => {
+      setCurrentPage(page);
+      document.querySelector('main').classList.remove('opacity-0');
+    }, 150);
   };
 
   // Function to handle scenario completion
@@ -72,9 +91,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar currentPage={currentPage} onNavigate={navigateTo} />
-      <main className="flex-grow px-4 py-6 md:px-8">
+      <main className="flex-grow px-4 py-8 md:px-6 md:py-10 transition-opacity duration-150 ease-in-out">
         {renderPage()}
       </main>
       <ZaptFooter />

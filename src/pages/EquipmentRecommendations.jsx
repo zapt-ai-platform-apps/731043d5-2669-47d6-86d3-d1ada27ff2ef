@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import EquipmentCard from '../components/EquipmentCard';
+import * as Sentry from '@sentry/browser';
 
 const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
   const [loading, setLoading] = useState(true);
@@ -25,6 +26,7 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
         setLoading(false);
       } catch (error) {
         console.error('Error getting recommendations:', error);
+        Sentry.captureException(error);
         setErrors('Failed to generate equipment recommendations');
         setLoading(false);
       }
@@ -225,9 +227,10 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
   if (loading) {
     return (
       <div className="container mx-auto max-w-4xl text-center py-12">
-        <div className="card">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mx-auto"></div>
-          <h2 className="text-xl mt-4">Analyzing your scenario and generating equipment recommendations...</h2>
+        <div className="card shadow-soft-lg animate-pulse-subtle">
+          <div className="loading-indicator h-16 w-16"></div>
+          <h2 className="text-xl mt-6 text-secondary-700">Analyzing your scenario and generating equipment recommendations...</h2>
+          <p className="text-secondary-500 mt-2">This will just take a moment</p>
         </div>
       </div>
     );
@@ -236,13 +239,16 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
   // If scenarioData is missing, show an error message
   if (!scenarioData) {
     return (
-      <div className="container mx-auto max-w-4xl text-center py-12">
-        <div className="card">
+      <div className="container mx-auto max-w-4xl text-center py-12 animate-fade-in">
+        <div className="card shadow-soft-lg border-red-100">
+          <svg className="h-16 w-16 text-red-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
           <h2 className="text-xl text-red-600 mb-4">Missing Scenario Data</h2>
-          <p className="mb-4">Please complete the scenario builder first to get equipment recommendations.</p>
+          <p className="mb-6 text-secondary-600">Please complete the scenario builder first to get equipment recommendations.</p>
           <button 
             onClick={() => window.history.back()} 
-            className="btn btn-primary"
+            className="btn btn-primary shadow-soft cursor-pointer"
           >
             Go Back
           </button>
@@ -252,17 +258,24 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl">
+    <div className="container mx-auto max-w-4xl animate-fade-in">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-blue-800">Recommended Equipment</h1>
-        <p className="text-gray-600">
-          Based on your {scenarioData?.environment || 'selected'} {scenarioData?.missionType?.replace('_', ' ') || 'mission'} scenario
+        <h1 className="text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-primary-700 to-primary-800 inline-block">
+          Recommended Equipment
+        </h1>
+        <p className="text-secondary-600 text-lg mt-3">
+          Based on your {scenarioData?.environment?.replace('_', ' ') || 'selected'} {scenarioData?.missionType?.replace('_', ' ') || 'mission'} scenario
         </p>
       </div>
 
       {errors && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {errors}
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6 shadow-soft animate-fade-in">
+          <div className="flex">
+            <svg className="h-5 w-5 text-red-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>{errors}</span>
+          </div>
         </div>
       )}
 
@@ -278,22 +291,36 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
         ))}
       </div>
 
-      <div className="card mb-8">
-        <h2 className="text-xl font-bold mb-4">Deployment Summary</h2>
-        <div className="flex justify-between mb-2">
-          <span>Total Selected Items:</span>
-          <span>{selectedEquipment.length} equipment types</span>
-        </div>
-        <div className="flex justify-between mb-4">
-          <span className="font-semibold">Estimated Total Cost:</span>
-          <span className="font-semibold">${calculateTotalCost().toLocaleString()}</span>
+      <div className="card mb-8 shadow-soft-lg border border-gray-100">
+        <h2 className="text-xl font-bold mb-5 text-secondary-900">Deployment Summary</h2>
+        <div className="bg-gray-50 p-4 rounded-lg mb-5">
+          <div className="flex justify-between mb-3">
+            <span className="text-secondary-600">Total Selected Items:</span>
+            <span className="font-medium text-secondary-800">{selectedEquipment.length} equipment types</span>
+          </div>
+          <div className="flex justify-between pb-3 border-b border-gray-200">
+            <span className="text-secondary-600">Total Quantity:</span>
+            <span className="font-medium text-secondary-800">
+              {recommendations
+                .filter(item => selectedEquipment.includes(item.id))
+                .reduce((sum, item) => sum + item.quantity, 0)} units
+            </span>
+          </div>
+          <div className="flex justify-between pt-3">
+            <span className="font-semibold text-secondary-900">Estimated Total Cost:</span>
+            <span className="font-bold text-primary-700">${calculateTotalCost().toLocaleString()}</span>
+          </div>
         </div>
         <button 
           onClick={handleSubmit} 
-          className="btn btn-primary w-full cursor-pointer"
+          className="btn btn-primary w-full group cursor-pointer shadow-soft"
           disabled={selectedEquipment.length === 0}
         >
-          Continue to Deployment Visualization
+          <span>Continue to Deployment Visualization</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
+               className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform">
+            <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
+          </svg>
         </button>
       </div>
     </div>
