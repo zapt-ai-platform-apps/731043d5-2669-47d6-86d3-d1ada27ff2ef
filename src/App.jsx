@@ -14,19 +14,21 @@ export default function App() {
   const [deploymentData, setDeploymentData] = useState(null);
 
   // Function to set the current page and manage workflow
-  const navigateTo = (page) => {
+  const navigateTo = (page, skipValidation = false) => {
     // Add simple validation to prevent skipping steps
-    if (page === 'equipment' && !scenarioData) {
-      console.log("Cannot navigate to equipment selection without scenario data");
-      return;
-    }
-    if (page === 'visualization' && (!scenarioData || !equipmentData)) {
-      console.log("Cannot navigate to visualization without scenario and equipment data");
-      return;
-    }
-    if (page === 'requirements' && (!scenarioData || !equipmentData || !deploymentData)) {
-      console.log("Cannot navigate to requirements doc without complete data");
-      return;
+    if (!skipValidation) {
+      if (page === 'equipment' && !scenarioData) {
+        console.log("Cannot navigate to equipment selection without scenario data");
+        return;
+      }
+      if (page === 'visualization' && (!scenarioData || !equipmentData)) {
+        console.log("Cannot navigate to visualization without scenario and equipment data");
+        return;
+      }
+      if (page === 'requirements' && (!scenarioData || !equipmentData || !deploymentData)) {
+        console.log("Cannot navigate to requirements doc without complete data");
+        return;
+      }
     }
     
     // Use animation classes for page transitions
@@ -40,19 +42,22 @@ export default function App() {
   // Function to handle scenario completion
   const handleScenarioComplete = (data) => {
     setScenarioData(data);
-    navigateTo('equipment');
+    // Use skipValidation flag to bypass the scenarioData check since we just set it
+    navigateTo('equipment', true);
   };
 
   // Function to handle equipment selection completion
   const handleEquipmentComplete = (data) => {
     setEquipmentData(data);
-    navigateTo('visualization');
+    // Use skipValidation flag to bypass the equipment check since we just set it
+    navigateTo('visualization', true);
   };
 
   // Function to handle visualization completion
   const handleVisualizationComplete = (data) => {
     setDeploymentData(data);
-    navigateTo('requirements');
+    // Use skipValidation flag to bypass the deployment check since we just set it
+    navigateTo('requirements', true);
   };
 
   // Render the appropriate page based on current state
