@@ -9,6 +9,13 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
 
   // Get equipment recommendations based on scenario data
   useEffect(() => {
+    // Handle case where scenarioData is missing
+    if (!scenarioData) {
+      setErrors('Scenario data is missing. Please complete the scenario builder first.');
+      setLoading(false);
+      return;
+    }
+
     // In a real app, this would be an API call
     setLoading(true);
     setTimeout(() => {
@@ -226,12 +233,30 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
     );
   }
 
+  // If scenarioData is missing, show an error message
+  if (!scenarioData) {
+    return (
+      <div className="container mx-auto max-w-4xl text-center py-12">
+        <div className="card">
+          <h2 className="text-xl text-red-600 mb-4">Missing Scenario Data</h2>
+          <p className="mb-4">Please complete the scenario builder first to get equipment recommendations.</p>
+          <button 
+            onClick={() => window.history.back()} 
+            className="btn btn-primary"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto max-w-4xl">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold text-blue-800">Recommended Equipment</h1>
         <p className="text-gray-600">
-          Based on your {scenarioData.environment} {scenarioData.missionType.replace('_', ' ')} scenario
+          Based on your {scenarioData?.environment || 'selected'} {scenarioData?.missionType?.replace('_', ' ') || 'mission'} scenario
         </p>
       </div>
 
@@ -265,7 +290,7 @@ const EquipmentRecommendations = ({ scenarioData, onComplete }) => {
         </div>
         <button 
           onClick={handleSubmit} 
-          className="btn btn-primary w-full"
+          className="btn btn-primary w-full cursor-pointer"
           disabled={selectedEquipment.length === 0}
         >
           Continue to Deployment Visualization
