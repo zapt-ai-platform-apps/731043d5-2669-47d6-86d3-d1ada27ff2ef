@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Circle, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import * as Sentry from '@sentry/browser';
 
 // Fix for Leaflet marker icons in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -20,10 +21,36 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
   const [deploymentNotes, setDeploymentNotes] = useState('');
   const mapRef = useRef(null);
 
+  // Display error message if scenario data is missing
+  if (!scenarioData) {
+    return (
+      <div className="container mx-auto max-w-4xl text-center py-12">
+        <div className="card">
+          <h2 className="text-xl text-red-600 mb-4">Missing Scenario Data</h2>
+          <p className="mb-4">Please complete the scenario builder first to visualize your deployment.</p>
+          <button 
+            onClick={() => window.history.back()} 
+            className="btn btn-primary cursor-pointer"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   useEffect(() => {
     // Set up some initial sensor placements based on scenario
     // This would ideally come from a more sophisticated algorithm
     const generateInitialPlacements = () => {
+      console.log("Generating initial placements with scenario data:", scenarioData);
+      
+      // Safety check for equipment data
+      if (!equipmentData) {
+        console.log("Equipment data is missing");
+        return [];
+      }
+      
       const numberOfSensors = equipmentData.reduce((total, item) => {
         // Only count the primary sensors, not accessories
         return item.id.startsWith('node-') ? total + item.quantity : total;
@@ -31,12 +58,19 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
       
       // Generate reasonable initial placements based on area size
       let radius;
-      switch(scenarioData.areaSize) {
-        case 'small': radius = 0.01; break;
-        case 'medium': radius = 0.02; break;
-        case 'large': radius = 0.04; break;
-        case 'very_large': radius = 0.08; break;
-        default: radius = 0.02;
+      // Make sure scenarioData and areaSize exist before using them
+      if (scenarioData && scenarioData.areaSize) {
+        switch(scenarioData.areaSize) {
+          case 'small': radius = 0.01; break;
+          case 'medium': radius = 0.02; break;
+          case 'large': radius = 0.04; break;
+          case 'very_large': radius = 0.08; break;
+          default: radius = 0.02;
+        }
+      } else {
+        // Default value if areaSize is missing
+        console.log("Area size not found, using default radius");
+        radius = 0.02;
       }
       
       // Generate roughly circular pattern of sensors
@@ -57,8 +91,15 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
       return initialLocations;
     };
     
-    setSensorLocations(generateInitialPlacements());
-  }, [equipmentData, mapCenter, scenarioData.areaSize]);
+    try {
+      setSensorLocations(generateInitialPlacements());
+    } catch (error) {
+      console.error("Error generating sensor placements:", error);
+      Sentry.captureException(error);
+      // Set empty sensor locations as fallback
+      setSensorLocations([]);
+    }
+  }, [equipmentData, mapCenter, scenarioData]); // Use scenarioData as a whole instead of just scenarioData.areaSize
 
   const handleMapClick = (e) => {
     if (isAddingMarker) {
@@ -150,7 +191,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
                         {sensor.notes && <p className="text-sm mt-1">{sensor.notes}</p>}
                         <button 
                           onClick={() => handleRemoveSensor(sensor.id)}
-                          className="text-red-500 text-sm mt-2"
+                          className="text-red-500 text-sm mt-2 cursor-pointer"
                         >
                           Remove Sensor
                         </button>
@@ -193,7 +234,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
             <div className="form-group">
               <button
                 onClick={handleAddMarkerToggle}
-                className={`btn w-full ${isAddingMarker ? 'bg-green-600 text-white' : 'btn-secondary'}`}
+                className={`btn w-full cursor-pointer ${isAddingMarker ? 'bg-green-600 text-white' : 'btn-secondary'}`}
               >
                 {isAddingMarker ? 'Click on Map to Place Sensor' : 'Add New Sensor'}
               </button>
@@ -207,7 +248,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
                   value={currentNote}
                   onChange={handleNoteChange}
                   placeholder="Enter notes for this sensor"
-                  className="input-field"
+                  className="input-field box-border"
                 />
               </div>
             )}
@@ -221,7 +262,7 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
               {Math.round(sensorLocations.length * Math.PI * Math.pow(coverageRadius/1000, 2))} km²
             </p>
             <p className="mb-4">
-              <strong>Deployment Type:</strong> {scenarioData.missionType.replace('_', ' ')}
+              <strong>Deployment Type:</strong> {scenarioData.missionType?.replace('_', ' ') || 'N/A'}
             </p>
             
             <div className="form-group">
@@ -230,14 +271,14 @@ const DeploymentVisualizer = ({ scenarioData, equipmentData, onComplete }) => {
                 value={deploymentNotes}
                 onChange={handleDeploymentNotesChange}
                 placeholder="Add any notes about this deployment plan..."
-                className="input-field h-24 resize-none"
+                className="input-field h-24 resize-none box-border"
               ></textarea>
             </div>
           </div>
           
           <button 
             onClick={handleSubmit}
-            className="btn btn-primary w-full"
+            className="btn btn-primary w-full cursor-pointer"
           >
             Generate Deployment Requirements
           </button>
