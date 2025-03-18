@@ -3,18 +3,26 @@ import React, { useState } from 'react';
 const Navbar = ({ currentPage, onNavigate }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Navigation items with their states based on the current workflow
+  // Determine which navigation items should be visible based on the current page
+  const canAccessEquipment = ['equipment', 'visualization', 'requirements'].includes(currentPage);
+  const canAccessVisualization = ['visualization', 'requirements'].includes(currentPage);
+  const canAccessRequirements = ['requirements'].includes(currentPage);
+
+  // Navigation items with their states based on the current workflow and accessibility
   const navItems = [
-    { id: 'home', label: 'Home', isActive: currentPage === 'home' },
-    { id: 'scenario', label: 'Scenario Builder', isActive: currentPage === 'scenario' },
-    { id: 'equipment', label: 'Equipment Selection', isActive: currentPage === 'equipment' },
-    { id: 'visualization', label: 'Deployment Visualization', isActive: currentPage === 'visualization' },
-    { id: 'requirements', label: 'Requirements Doc', isActive: currentPage === 'requirements' }
+    { id: 'home', label: 'Home', isActive: currentPage === 'home', show: true },
+    { id: 'scenario', label: 'Scenario Builder', isActive: currentPage === 'scenario', show: true },
+    { id: 'equipment', label: 'Equipment Selection', isActive: currentPage === 'equipment', show: canAccessEquipment },
+    { id: 'visualization', label: 'Deployment Visualization', isActive: currentPage === 'visualization', show: canAccessVisualization },
+    { id: 'requirements', label: 'Requirements Doc', isActive: currentPage === 'requirements', show: canAccessRequirements }
   ];
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
+
+  // Filter visible navigation items
+  const visibleNavItems = navItems.filter(item => item.show);
 
   return (
     <nav className="bg-gradient-to-r from-primary-700 to-primary-800 text-white shadow-soft-lg">
@@ -32,7 +40,7 @@ const Navbar = ({ currentPage, onNavigate }) => {
               <span className="text-xl font-bold font-display tracking-tight">RFeye Deployment Planner</span>
             </div>
             <button 
-              className="md:hidden text-white focus:outline-none"
+              className="md:hidden text-white focus:outline-none cursor-pointer"
               onClick={toggleMobileMenu}
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             >
@@ -49,7 +57,7 @@ const Navbar = ({ currentPage, onNavigate }) => {
           </div>
           
           <div className="hidden md:flex md:space-x-1 mt-4 md:mt-0">
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
@@ -73,7 +81,7 @@ const Navbar = ({ currentPage, onNavigate }) => {
               : 'scale-y-90 opacity-0 max-h-0 overflow-hidden'
           }`}
         >
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <button
               key={item.id}
               onClick={() => {
