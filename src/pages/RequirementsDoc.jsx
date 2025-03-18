@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+import * as Sentry from '@sentry/browser';
 
 const RequirementsDoc = ({ 
   scenarioData, 
@@ -10,6 +11,58 @@ const RequirementsDoc = ({
 }) => {
   const [generating, setGenerating] = useState(false);
   const documentRef = React.useRef(null);
+
+  // If any of the required data is missing, show appropriate error message
+  if (!scenarioData) {
+    return (
+      <div className="container mx-auto max-w-4xl text-center py-12">
+        <div className="card">
+          <h2 className="text-xl text-red-600 mb-4">Missing Scenario Data</h2>
+          <p className="mb-4">Please complete the scenario builder first to generate a requirements document.</p>
+          <button 
+            onClick={onStartOver} 
+            className="btn btn-primary cursor-pointer"
+          >
+            Go Back to Start
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!equipmentData) {
+    return (
+      <div className="container mx-auto max-w-4xl text-center py-12">
+        <div className="card">
+          <h2 className="text-xl text-red-600 mb-4">Missing Equipment Data</h2>
+          <p className="mb-4">Please complete the equipment selection step first to continue.</p>
+          <button 
+            onClick={onStartOver} 
+            className="btn btn-primary cursor-pointer"
+          >
+            Go Back to Start
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!deploymentData) {
+    return (
+      <div className="container mx-auto max-w-4xl text-center py-12">
+        <div className="card">
+          <h2 className="text-xl text-red-600 mb-4">Missing Deployment Data</h2>
+          <p className="mb-4">Please complete the deployment visualization step first to continue.</p>
+          <button 
+            onClick={onStartOver} 
+            className="btn btn-primary cursor-pointer"
+          >
+            Go Back to Start
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const formatDate = () => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -46,13 +99,25 @@ const RequirementsDoc = ({
       const imgWidth = 210;
       const imgHeight = canvas.height * imgWidth / canvas.width;
       
+      // Use a safe default name if projectName is missing
+      const projectName = scenarioData.projectName || 'Deployment';
       pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
-      pdf.save(`RFeye_Deployment_Plan_${scenarioData.projectName.replace(/\s+/g, '_')}.pdf`);
+      pdf.save(`RFeye_Deployment_Plan_${projectName.replace(/\s+/g, '_')}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
+      Sentry.captureException(error);
     } finally {
       setGenerating(false);
     }
+  };
+
+  // Safe accessor function to get data with fallbacks
+  const getScenarioValue = (field, defaultValue = 'N/A') => {
+    return scenarioData && scenarioData[field] 
+      ? field.includes('Type') || field.includes('Objective') || field.includes('Size') 
+        ? scenarioData[field].replace(/_/g, ' ')
+        : scenarioData[field]
+      : defaultValue;
   };
 
   return (
@@ -66,7 +131,7 @@ const RequirementsDoc = ({
         <button 
           onClick={handleDownloadPDF}
           disabled={generating}
-          className="btn btn-primary px-6"
+          className="btn btn-primary px-6 cursor-pointer"
         >
           {generating ? 'Generating PDF...' : 'Download PDF Document'}
         </button>
@@ -75,7 +140,7 @@ const RequirementsDoc = ({
       <div id="requirements-document" ref={documentRef} className="card mb-8 p-8">
         <div className="text-center mb-8 pb-6 border-b border-gray-200">
           <h1 className="text-3xl font-bold text-blue-800 mb-2">RFeye Deployment Plan</h1>
-          <h2 className="text-xl text-gray-600">{scenarioData.projectName}</h2>
+          <h2 className="text-xl text-gray-600">{getScenarioValue('projectName', 'Unnamed Project')}</h2>
           <p className="text-gray-500 mt-2">Generated on {formatDate()}</p>
         </div>
         
@@ -83,13 +148,13 @@ const RequirementsDoc = ({
           <h2 className="text-xl font-bold border-b border-gray-200 pb-2 mb-4">1. Deployment Scenario</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p><strong>Mission Type:</strong> {scenarioData.missionType.replace('_', ' ')}</p>
-              <p><strong>Environment:</strong> {scenarioData.environment}</p>
-              <p><strong>Coverage Objective:</strong> {scenarioData.coverageObjective.replace('_', ' ')}</p>
+              <p><strong>Mission Type:</strong> {getScenarioValue('missionType')}</p>
+              <p><strong>Environment:</strong> {getScenarioValue('environment')}</p>
+              <p><strong>Coverage Objective:</strong> {getScenarioValue('coverageObjective')}</p>
             </div>
             <div>
-              <p><strong>Area Size:</strong> {scenarioData.areaSize.replace('_', ' ')}</p>
-              <p><strong>Terrain Complexity:</strong> {scenarioData.terrainComplexity}</p>
+              <p><strong>Area Size:</strong> {getScenarioValue('areaSize')}</p>
+              <p><strong>Terrain Complexity:</strong> {getScenarioValue('terrainComplexity')}</p>
             </div>
           </div>
           {scenarioData.specialRequirements && (
@@ -153,7 +218,7 @@ const RequirementsDoc = ({
             <li>Ensure unobstructed line of sight between sensors for optimal performance.</li>
             <li>Regular maintenance should be scheduled every 6 months or after extreme weather events.</li>
             <li>Coordinate with local authorities for necessary permits and access rights.</li>
-            <li>Consider additional weatherproofing measures for {scenarioData.environment} environments.</li>
+            <li>Consider additional weatherproofing measures for {getScenarioValue('environment')} environments.</li>
             <li>Ensure stable power supply and network connectivity at each sensor location.</li>
           </ul>
         </div>
@@ -178,7 +243,7 @@ const RequirementsDoc = ({
       <div className="text-center mb-12">
         <button 
           onClick={onStartOver}
-          className="btn btn-secondary px-6"
+          className="btn btn-secondary px-6 cursor-pointer"
         >
           Start a New Deployment Plan
         </button>
